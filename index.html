@@ -23,12 +23,20 @@
                                         <input type="number" class="form-control" id="initialInvestment" value="100" min="1" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="dailyTrades" class="form-label">Trades per Day</label>
-                                        <input type="number" class="form-control" id="dailyTrades" value="2" min="1" max="10" required>
+                                        <label for="winningTrades" class="form-label">Winning Trades per Day</label>
+                                        <input type="number" class="form-control" id="winningTrades" value="2" min="0" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="profitPerTrade" class="form-label">Profit per Trade (%)</label>
-                                        <input type="number" class="form-control" id="profitPerTrade" value="18" min="0" max="100" required>
+                                        <label for="losingTrades" class="form-label">Losing Trades per Day</label>
+                                        <input type="number" class="form-control" id="losingTrades" value="1" min="0" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="profitPerTrade" class="form-label">Profit per Winning Trade (%)</label>
+                                        <input type="number" class="form-control" id="profitPerTrade" value="18" min="0" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="lossPerTrade" class="form-label">Loss per Losing Trade (%)</label>
+                                        <input type="number" class="form-control" id="lossPerTrade" value="10" min="0" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="reinvestRate" class="form-label">Reinvestment Rate (%)</label>
@@ -68,9 +76,10 @@
                                             <tr>
                                                 <th>Day</th>
                                                 <th>Start Capital (€)</th>
-                                                <th>Daily Gains (€)</th>
+                                                <th>Daily P/L (€)</th>
                                                 <th>End Capital (€)</th>
                                                 <th>Reinvested (€)</th>
+                                                <th>Win/Loss</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -100,8 +109,10 @@
             
             // Get input values
             const initialInvestment = parseFloat(document.getElementById('initialInvestment').value);
-            const dailyTrades = parseInt(document.getElementById('dailyTrades').value);
+            const winningTrades = parseInt(document.getElementById('winningTrades').value);
+            const losingTrades = parseInt(document.getElementById('losingTrades').value);
             const profitPerTrade = parseFloat(document.getElementById('profitPerTrade').value) / 100;
+            const lossPerTrade = parseFloat(document.getElementById('lossPerTrade').value) / 100;
             const reinvestRate = parseFloat(document.getElementById('reinvestRate').value) / 100;
             const daysSelect = document.getElementById('days');
             const days = daysSelect.value === 'custom' 
@@ -116,21 +127,28 @@
                 let dailyCapital = currentInvestment;
                 let endCapital = currentInvestment;
 
-                // Calculate each trade
-                for (let trade = 0; trade < dailyTrades; trade++) {
+                // Calculate winning trades
+                for (let trade = 0; trade < winningTrades; trade++) {
                     const tradeProfit = endCapital * profitPerTrade;
                     endCapital += tradeProfit;
                 }
 
-                const dailyGains = endCapital - dailyCapital;
-                const reinvested = dailyGains * reinvestRate;
+                // Calculate losing trades
+                for (let trade = 0; trade < losingTrades; trade++) {
+                    const tradeLoss = endCapital * lossPerTrade;
+                    endCapital -= tradeLoss;
+                }
+
+                const dailyPL = endCapital - dailyCapital;
+                const reinvested = dailyPL > 0 ? dailyPL * reinvestRate : dailyPL;
                 
                 results.push({
                     day,
                     startCapital: dailyCapital,
-                    dailyGains,
+                    dailyPL,
                     endCapital,
-                    reinvested
+                    reinvested,
+                    trades: `${winningTrades}W/${losingTrades}L`
                 });
 
                 currentInvestment = dailyCapital + reinvested;
@@ -144,9 +162,18 @@
                 const row = tbody.insertRow();
                 row.insertCell().textContent = result.day;
                 row.insertCell().textContent = result.startCapital.toFixed(2);
-                row.insertCell().textContent = result.dailyGains.toFixed(2);
+                row.insertCell().textContent = result.dailyPL.toFixed(2);
                 row.insertCell().textContent = result.endCapital.toFixed(2);
                 row.insertCell().textContent = result.reinvested.toFixed(2);
+                row.insertCell().textContent = result.trades;
+
+                // Color code the P/L cell
+                const plCell = row.cells[2];
+                if (result.dailyPL > 0) {
+                    plCell.classList.add('text-success');
+                } else if (result.dailyPL < 0) {
+                    plCell.classList.add('text-danger');
+                }
             });
         });
     </script>
