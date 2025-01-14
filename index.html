@@ -23,6 +23,7 @@
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
   </head>
+
   <body class="bg-light">
     <div class="container-fluid mt-2 mb-5">
       <div class="row">
@@ -48,6 +49,13 @@
                             required
                           />
                           <label for="initialInvestment">Initial Investment</label>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 col-lg-4">
+                        <div class="form-floating">
+                          <input type="date" class="form-control" id="startDate" required />
+                          <label for="startDate">Start Date</label>
                         </div>
                       </div>
 
@@ -263,6 +271,7 @@
                       <thead>
                         <tr>
                           <th>Day</th>
+                          <th>Date</th>
                           <th>Start Capital (€)</th>
                           <th>Daily P/L (€)</th>
                           <th>Daily Growth (%)</th>
@@ -420,8 +429,11 @@
           summaryMultiplier.classList.add('text-danger', 'fw-bold');
         }
 
-        results.forEach(result => {
+        results.forEach((result, index) => {
           const row = tbody.insertRow();
+          const currentDate = new Date(document.getElementById('startDate').value);
+          currentDate.setDate(currentDate.getDate() + index);
+
           const dailyGrowthPercentage =
             ((result.endCapital - result.startCapital) / result.startCapital) * 100;
           const totalGrowthPercentage =
@@ -429,6 +441,7 @@
           const growthMultiplier = result.endCapital / initialInvestment;
 
           row.insertCell().textContent = result.day;
+          row.insertCell().textContent = formatDate(currentDate);
           row.insertCell().textContent = formatMoney(result.startCapital);
           row.insertCell().textContent = formatMoney(result.dailyPL);
           row.insertCell().textContent = numeral(dailyGrowthPercentage).format('+0,0.00') + '%';
@@ -504,6 +517,7 @@
           reinvestRate: document.getElementById('reinvestRate').value,
           days: document.getElementById('days').value,
           customDays: document.getElementById('customDays').value,
+          startDate: document.getElementById('startDate').value,
         };
 
         localStorage.setItem('investmentCalculatorData', JSON.stringify(formData));
@@ -548,6 +562,12 @@
           // Update currency display
           selectedCurrency = formData.currency;
           updateSummary();
+
+          if (formData.startDate) {
+            document.getElementById('startDate').value = formData.startDate;
+          } else {
+            document.getElementById('startDate').valueAsDate = new Date();
+          }
         }
       }
 
@@ -563,6 +583,18 @@
 
       // Save data before page unloads
       window.addEventListener('beforeunload', saveFormData);
+
+      // Set default date to today
+      document.getElementById('startDate').valueAsDate = new Date();
+
+      // Function to format date
+      function formatDate(date) {
+        return new Intl.DateTimeFormat('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        }).format(date);
+      }
     </script>
   </body>
 </html>
