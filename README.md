@@ -39,7 +39,8 @@ A web-based investment calculator that helps users project potential investment 
 
 ## Installation
 
-No installation required. Simply clone the repository and open `index.html` in a web browser: 
+No installation required. Simply clone the repository and open `index.html` in a web browser:
+
 ```bash
 git clone https://github.com/your-repo/investment-calculator.git
 cd investment-calculator
@@ -62,7 +63,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 This calculator is for educational purposes only. Trading and investing involve risk, and past performance does not guarantee future results. Always conduct thorough research and consult with financial professionals before making investment decisions.
 
-Changes made: 
+Changes made:
+
 1. Updated the form inputs for losing trades to start at 0 by default
 2. Added "(Optional)" to the labels for losing trade inputs
 3. Updated the README to:
@@ -71,4 +73,4 @@ Changes made:
    - Add Numeral.js to the technologies list
    - Update the usage instructions
    - Improve the overall documentation
-The calculator will now work perfectly with or without losing trades, making it more flexible for different trading strategies.
+     The calculator will now work perfectly with or without losing trades, making it more flexible for different trading strategies.

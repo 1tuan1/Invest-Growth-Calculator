@@ -1,514 +1,568 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Investment Calculator</title>
-    
+
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#0d6efd">
-    <meta name="description" content="Calculate investment growth with trading parameters">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="InvestCalc">
-    
+    <meta name="theme-color" content="#0d6efd" />
+    <meta name="description" content="Calculate investment growth with trading parameters" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="InvestCalc" />
+
     <!-- PWA Links -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icons/152x152.png">
-    
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="icons/152x152.png" />
+
     <!-- Existing Links -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
-</head>
-<body class="bg-light">
+  </head>
+  <body class="bg-light">
     <div class="container-fluid mt-2 mb-5">
-        <div class="row">
-            <div class="col-12">
-                <div class="row">
-                    <div class="col-12 mx-auto">
-                        <div class="card shadow">
-                            <div class="card-header bg-primary text-white">
-                                <h3 class="mb-0">Investment Growth Calculator</h3>
-                            </div>
-                            <div class="card-body">
-                                <form id="calculatorForm">
-                                    <div class="row g-3">
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="form-floating">
-                                                <input type="number" class="form-control" id="initialInvestment" value="100" min="1" step="0.01" required>
-                                                <label for="initialInvestment">Initial Investment</label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="form-floating">
-                                                <select class="form-select" id="currency" required>
-                                                    <!-- Major World Currencies -->
-                                                    <option value="€">EUR (€) - Euro</option>
-                                                    <option value="$">USD ($) - US Dollar</option>
-                                                    <option value="£">GBP (£) - British Pound</option>
-                                                    <option value="¥">JPY (¥) - Japanese Yen</option>
-                                                    <option value="CHF">CHF - Swiss Franc</option>
-                                                    <option value="A$">AUD (A$) - Australian Dollar</option>
-                                                    <option value="C$">CAD (C$) - Canadian Dollar</option>
-                                                    <option value="NZ$">NZD (NZ$) - New Zealand Dollar</option>
-                                                    
-                                                    <!-- Asian Currencies -->
-                                                    <option value="¥">CNY (¥) - Chinese Yuan</option>
-                                                    <option value="HK$">HKD (HK$) - Hong Kong Dollar</option>
-                                                    <option value="₹">INR (₹) - Indian Rupee</option>
-                                                    <option value="₩">KRW (₩) - South Korean Won</option>
-                                                    <option value="₪">ILS (₪) - Israeli Shekel</option>
-                                                    <option value="₺">TRY (₺) - Turkish Lira</option>
-                                                    
-                                                    <!-- Cryptocurrencies -->
-                                                    <option value="₿">BTC (₿) - Bitcoin</option>
-                                                    <option value="Ξ">ETH (Ξ) - Ethereum</option>
-                                                    <option value="USDT">USDT - Tether</option>
-                                                    <option value="BNB">BNB - Binance Coin</option>
-                                                    
-                                                    <!-- Scandinavian Currencies -->
-                                                    <option value="kr">SEK (kr) - Swedish Krona</option>
-                                                    <option value="kr">NOK (kr) - Norwegian Krone</option>
-                                                    <option value="kr">DKK (kr) - Danish Krone</option>
-                                                    
-                                                    <!-- Other Major Currencies -->
-                                                    <option value="R$">BRL (R$) - Brazilian Real</option>
-                                                    <option value="R">ZAR (R) - South African Rand</option>
-                                                    <option value="$">MXN ($) - Mexican Peso</option>
-                                                    <option value="₽">RUB (₽) - Russian Ruble</option>
-                                                    <option value="zł">PLN (zł) - Polish Złoty</option>
-                                                </select>
-                                                <label for="currency">Currency</label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="form-floating">
-                                                <input type="number" class="form-control" id="winningTrades" value="2" min="0" required>
-                                                <label for="winningTrades">Winning Trades per Day</label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-12 mb-2">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="includeLosses">
-                                                <label class="form-check-label" for="includeLosses">
-                                                    Include Losing Trades
-                                                </label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-4 losses-section d-none">
-                                            <div class="form-floating">
-                                                <input type="number" 
-                                                       class="form-control" 
-                                                       id="losingTrades" 
-                                                       value="0" 
-                                                       min="0" 
-                                                       step="1" 
-                                                       placeholder="0">
-                                                <label for="losingTrades">Losing Trades per Day</label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-4 losses-section d-none">
-                                            <div class="form-floating">
-                                                <input type="number" 
-                                                       class="form-control" 
-                                                       id="lossPerTrade" 
-                                                       value="0" 
-                                                       min="0" 
-                                                       step="0.01"
-                                                       placeholder="0">
-                                                <label for="lossPerTrade">Loss per Loss (%)</label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="form-floating">
-                                                <input type="number" class="form-control" id="profitPerTrade" value="18" min="0" step="0.01" required>
-                                                <label for="profitPerTrade">Profit per Win (%)</label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="form-floating">
-                                                <input type="number" class="form-control" id="reinvestRate" value="98" min="0" max="100" step="0.01" required>
-                                                <label for="reinvestRate">Reinvestment Rate (%)</label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6">
-                                            <div class="form-floating">
-                                                <select class="form-select" id="days">
-                                                    <option value="7">7 days</option>
-                                                    <option value="14">14 days</option>
-                                                    <option value="30">30 days</option>
-                                                    <option value="custom">Custom</option>
-                                                </select>
-                                                <label for="days">Number of Days</label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 d-none" id="customDaysDiv">
-                                            <div class="form-floating">
-                                                <input type="number" class="form-control" id="customDays" value="7" min="1" max="365">
-                                                <label for="customDays">Custom Days</label>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-12 text-center mt-4">
-                                            <button type="submit" class="btn btn-primary btn-lg px-5">Calculate</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="row">
+            <div class="col-12 mx-auto">
+              <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                  <h3 class="mb-0">Investment Growth Calculator</h3>
                 </div>
-            </div>
-            <div class="col-12 mt-2">
-                <div class="row mt-4 mt-md-0">
-                    <div class="col-12">
-                        <div class="card shadow">
-                            <div class="card-header bg-success text-white">
-                                <h4 class="mb-0">Results</h4>
-                            </div>
-                            <div class="card-body">
-                                <!-- Add Summary Section -->
-                                <div class="row mb-4">
-                                    <div class="col-md-3 mb-2">
-                                        <div class="card bg-light">
-                                            <div class="card-body text-center">
-                                                <h6 class="text-muted mb-2">Initial Investment</h6>
-                                                <h4 class="mb-0" id="summaryInitial">0.00 €</h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <div class="card bg-light">
-                                            <div class="card-body text-center">
-                                                <h6 class="text-muted mb-2">Final Capital</h6>
-                                                <h4 class="mb-0" id="summaryFinal">0.00 €</h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <div class="card bg-light">
-                                            <div class="card-body text-center">
-                                                <h6 class="text-muted mb-2">Total Growth</h6>
-                                                <h4 class="mb-0" id="summaryGrowth">0.00%</h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <div class="card bg-light">
-                                            <div class="card-body text-center">
-                                                <h6 class="text-muted mb-2">Growth Multiplier</h6>
-                                                <h4 class="mb-0" id="summaryMultiplier">0.00×</h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Results Table -->
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-hover" id="resultsTable">
-                                        <thead>
-                                            <tr>
-                                                <th>Day</th>
-                                                <th>Start Capital (€)</th>
-                                                <th>Daily P/L (€)</th>
-                                                <th>Daily Growth (%)</th>
-                                                <th>Total Growth (%)</th>
-                                                <th>Growth (×)</th>
-                                                <th>End Capital (€)</th>
-                                                <th>Reinvested (€)</th>
-                                                <th>Win/Loss</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                <div class="card-body">
+                  <form id="calculatorForm">
+                    <div class="row g-3">
+                      <div class="col-md-6 col-lg-4">
+                        <div class="form-floating">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="initialInvestment"
+                            value="100"
+                            min="1"
+                            step="0.01"
+                            required
+                          />
+                          <label for="initialInvestment">Initial Investment</label>
                         </div>
+                      </div>
+
+                      <div class="col-md-6 col-lg-4">
+                        <div class="form-floating">
+                          <select class="form-select" id="currency" required>
+                            <!-- Major World Currencies -->
+                            <option value="€">EUR (€) - Euro</option>
+                            <option value="$">USD ($) - US Dollar</option>
+                            <option value="£">GBP (£) - British Pound</option>
+                            <option value="¥">JPY (¥) - Japanese Yen</option>
+                            <option value="CHF">CHF - Swiss Franc</option>
+                            <option value="A$">AUD (A$) - Australian Dollar</option>
+                            <option value="C$">CAD (C$) - Canadian Dollar</option>
+                            <option value="NZ$">NZD (NZ$) - New Zealand Dollar</option>
+
+                            <!-- Asian Currencies -->
+                            <option value="¥">CNY (¥) - Chinese Yuan</option>
+                            <option value="HK$">HKD (HK$) - Hong Kong Dollar</option>
+                            <option value="₹">INR (₹) - Indian Rupee</option>
+                            <option value="₩">KRW (₩) - South Korean Won</option>
+                            <option value="₪">ILS (₪) - Israeli Shekel</option>
+                            <option value="₺">TRY (₺) - Turkish Lira</option>
+
+                            <!-- Cryptocurrencies -->
+                            <option value="₿">BTC (₿) - Bitcoin</option>
+                            <option value="Ξ">ETH (Ξ) - Ethereum</option>
+                            <option value="USDT">USDT - Tether</option>
+                            <option value="BNB">BNB - Binance Coin</option>
+
+                            <!-- Scandinavian Currencies -->
+                            <option value="kr">SEK (kr) - Swedish Krona</option>
+                            <option value="kr">NOK (kr) - Norwegian Krone</option>
+                            <option value="kr">DKK (kr) - Danish Krone</option>
+
+                            <!-- Other Major Currencies -->
+                            <option value="R$">BRL (R$) - Brazilian Real</option>
+                            <option value="R">ZAR (R) - South African Rand</option>
+                            <option value="$">MXN ($) - Mexican Peso</option>
+                            <option value="₽">RUB (₽) - Russian Ruble</option>
+                            <option value="zł">PLN (zł) - Polish Złoty</option>
+                          </select>
+                          <label for="currency">Currency</label>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 col-lg-4">
+                        <div class="form-floating">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="winningTrades"
+                            value="2"
+                            min="0"
+                            required
+                          />
+                          <label for="winningTrades">Winning Trades per Day</label>
+                        </div>
+                      </div>
+
+                      <div class="col-12 mb-2">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="includeLosses" />
+                          <label class="form-check-label" for="includeLosses">
+                            Include Losing Trades
+                          </label>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 col-lg-4 losses-section d-none">
+                        <div class="form-floating">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="losingTrades"
+                            value="0"
+                            min="0"
+                            step="1"
+                            placeholder="0"
+                          />
+                          <label for="losingTrades">Losing Trades per Day</label>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 col-lg-4 losses-section d-none">
+                        <div class="form-floating">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="lossPerTrade"
+                            value="0"
+                            min="0"
+                            step="0.01"
+                            placeholder="0"
+                          />
+                          <label for="lossPerTrade">Loss per Loss (%)</label>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 col-lg-4">
+                        <div class="form-floating">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="profitPerTrade"
+                            value="18"
+                            min="0"
+                            step="0.01"
+                            required
+                          />
+                          <label for="profitPerTrade">Profit per Win (%)</label>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 col-lg-4">
+                        <div class="form-floating">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="reinvestRate"
+                            value="98"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            required
+                          />
+                          <label for="reinvestRate">Reinvestment Rate (%)</label>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-floating">
+                          <select class="form-select" id="days">
+                            <option value="7">7 days</option>
+                            <option value="14">14 days</option>
+                            <option value="30">30 days</option>
+                            <option value="custom">Custom</option>
+                          </select>
+                          <label for="days">Number of Days</label>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 d-none" id="customDaysDiv">
+                        <div class="form-floating">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="customDays"
+                            value="7"
+                            min="1"
+                            max="365"
+                          />
+                          <label for="customDays">Custom Days</label>
+                        </div>
+                      </div>
+
+                      <div class="col-12 text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">Calculate</button>
+                      </div>
                     </div>
+                  </form>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+        <div class="col-12 mt-2">
+          <div class="row mt-4 mt-md-0">
+            <div class="col-12">
+              <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                  <h4 class="mb-0">Results</h4>
+                </div>
+                <div class="card-body">
+                  <!-- Add Summary Section -->
+                  <div class="row mb-4">
+                    <div class="col-md-3 mb-2">
+                      <div class="card bg-light">
+                        <div class="card-body text-center">
+                          <h6 class="text-muted mb-2">Initial Investment</h6>
+                          <h4 class="mb-0" id="summaryInitial">0.00 €</h4>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                      <div class="card bg-light">
+                        <div class="card-body text-center">
+                          <h6 class="text-muted mb-2">Final Capital</h6>
+                          <h4 class="mb-0" id="summaryFinal">0.00 €</h4>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                      <div class="card bg-light">
+                        <div class="card-body text-center">
+                          <h6 class="text-muted mb-2">Total Growth</h6>
+                          <h4 class="mb-0" id="summaryGrowth">0.00%</h4>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                      <div class="card bg-light">
+                        <div class="card-body text-center">
+                          <h6 class="text-muted mb-2">Growth Multiplier</h6>
+                          <h4 class="mb-0" id="summaryMultiplier">0.00×</h4>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Results Table -->
+                  <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="resultsTable">
+                      <thead>
+                        <tr>
+                          <th>Day</th>
+                          <th>Start Capital (€)</th>
+                          <th>Daily P/L (€)</th>
+                          <th>Daily Growth (%)</th>
+                          <th>Total Growth (%)</th>
+                          <th>Growth (×)</th>
+                          <th>End Capital (€)</th>
+                          <th>Reinvested (€)</th>
+                          <th>Win/Loss</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        let selectedCurrency = '€';
-        
-        document.getElementById('currency').addEventListener('change', function() {
-            selectedCurrency = this.value;
-            updateSummary();
+      let selectedCurrency = '€';
+
+      document.getElementById('currency').addEventListener('change', function () {
+        selectedCurrency = this.value;
+        updateSummary();
+      });
+
+      function formatMoney(amount) {
+        switch (selectedCurrency) {
+          case '€':
+            return numeral(amount).format('0,0.00') + ' €';
+          case '₿':
+            return numeral(amount).format('0,0.00000000') + ' ₿';
+          case 'Ξ':
+            return numeral(amount).format('0,0.00000000') + ' Ξ';
+          case '¥':
+          case '₩':
+            // No decimals for Yen and Won
+            return selectedCurrency + numeral(amount).format('0,0');
+          case 'USDT':
+          case 'BNB':
+            // Crypto tokens
+            return numeral(amount).format('0,0.00') + ' ' + selectedCurrency;
+          default:
+            // Default format for other currencies
+            return selectedCurrency + numeral(amount).format('0,0.00');
+        }
+      }
+
+      function updateSummary() {
+        const summaryInitial = document.getElementById('summaryInitial');
+        const summaryFinal = document.getElementById('summaryFinal');
+
+        if (summaryInitial && summaryInitial.textContent) {
+          const value = parseFloat(summaryInitial.textContent);
+          summaryInitial.textContent = formatMoney(value);
+        }
+        if (summaryFinal && summaryFinal.textContent) {
+          const value = parseFloat(summaryFinal.textContent);
+          summaryFinal.textContent = formatMoney(value);
+        }
+      }
+
+      document.getElementById('days').addEventListener('change', function () {
+        const customDaysDiv = document.getElementById('customDaysDiv');
+        if (this.value === 'custom') {
+          customDaysDiv.classList.remove('d-none');
+        } else {
+          customDaysDiv.classList.add('d-none');
+        }
+      });
+
+      document.getElementById('calculatorForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Get input values
+        const initialInvestment = parseFloat(document.getElementById('initialInvestment').value);
+        const winningTrades = parseInt(document.getElementById('winningTrades').value);
+        const losingTrades = parseInt(document.getElementById('losingTrades').value);
+        const profitPerTrade = parseFloat(document.getElementById('profitPerTrade').value) / 100;
+        const lossPerTrade = parseFloat(document.getElementById('lossPerTrade').value) / 100;
+        const reinvestRate = parseFloat(document.getElementById('reinvestRate').value) / 100;
+        const daysSelect = document.getElementById('days');
+        const days =
+          daysSelect.value === 'custom'
+            ? parseInt(document.getElementById('customDays').value)
+            : parseInt(daysSelect.value);
+
+        // Calculate results
+        let currentInvestment = initialInvestment;
+        const results = [];
+
+        for (let day = 1; day <= days; day++) {
+          let dailyCapital = currentInvestment;
+          let endCapital = currentInvestment;
+
+          // Calculate winning trades
+          for (let trade = 0; trade < winningTrades; trade++) {
+            const tradeProfit = endCapital * profitPerTrade;
+            endCapital += tradeProfit;
+          }
+
+          // Calculate losing trades
+          for (let trade = 0; trade < losingTrades; trade++) {
+            const tradeLoss = endCapital * lossPerTrade;
+            endCapital -= tradeLoss;
+          }
+
+          const dailyPL = endCapital - dailyCapital;
+          const reinvested = dailyPL > 0 ? dailyPL * reinvestRate : dailyPL;
+
+          results.push({
+            day,
+            startCapital: dailyCapital,
+            dailyPL,
+            endCapital,
+            reinvested,
+            trades: `${winningTrades}W/${losingTrades}L`,
+          });
+
+          currentInvestment = dailyCapital + reinvested;
+        }
+
+        // Clear previous results
+        const tbody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
+        tbody.innerHTML = '';
+
+        // Update summary section
+        const lastResult = results[results.length - 1];
+        const totalGrowthPercentage =
+          ((lastResult.endCapital - initialInvestment) / initialInvestment) * 100;
+        const growthMultiplier = lastResult.endCapital / initialInvestment;
+
+        document.getElementById('summaryInitial').textContent = formatMoney(initialInvestment);
+        document.getElementById('summaryFinal').textContent = formatMoney(lastResult.endCapital);
+        document.getElementById('summaryGrowth').textContent =
+          numeral(totalGrowthPercentage).format('+0,0.00') + '%';
+        document.getElementById('summaryMultiplier').textContent =
+          numeral(growthMultiplier).format('0,0.00') + '×';
+
+        // Color code the summary cards based on growth
+        const summaryFinal = document.getElementById('summaryFinal');
+        const summaryGrowth = document.getElementById('summaryGrowth');
+        const summaryMultiplier = document.getElementById('summaryMultiplier');
+
+        if (totalGrowthPercentage > 0) {
+          summaryFinal.classList.add('text-success', 'fw-bold');
+          summaryGrowth.classList.add('text-success', 'fw-bold');
+          summaryMultiplier.classList.add('text-success', 'fw-bold');
+        } else if (totalGrowthPercentage < 0) {
+          summaryFinal.classList.add('text-danger', 'fw-bold');
+          summaryGrowth.classList.add('text-danger', 'fw-bold');
+          summaryMultiplier.classList.add('text-danger', 'fw-bold');
+        }
+
+        results.forEach(result => {
+          const row = tbody.insertRow();
+          const dailyGrowthPercentage =
+            ((result.endCapital - result.startCapital) / result.startCapital) * 100;
+          const totalGrowthPercentage =
+            ((result.endCapital - initialInvestment) / initialInvestment) * 100;
+          const growthMultiplier = result.endCapital / initialInvestment;
+
+          row.insertCell().textContent = result.day;
+          row.insertCell().textContent = formatMoney(result.startCapital);
+          row.insertCell().textContent = formatMoney(result.dailyPL);
+          row.insertCell().textContent = numeral(dailyGrowthPercentage).format('+0,0.00') + '%';
+          row.insertCell().textContent = numeral(totalGrowthPercentage).format('+0,0.00') + '%';
+          row.insertCell().textContent = numeral(growthMultiplier).format('0,0.00') + '×';
+          row.insertCell().textContent = formatMoney(result.endCapital);
+          row.insertCell().textContent = formatMoney(result.reinvested);
+          row.insertCell().textContent = result.trades;
+
+          // Color code the P/L and Growth cells
+          const plCell = row.cells[2];
+          const dailyGrowthCell = row.cells[3];
+          const totalGrowthCell = row.cells[4];
+          const multiplierCell = row.cells[5];
+
+          if (result.dailyPL > 0) {
+            plCell.classList.add('text-success', 'fw-bold');
+            dailyGrowthCell.classList.add('text-success', 'fw-bold');
+            totalGrowthCell.classList.add('text-success', 'fw-bold');
+            multiplierCell.classList.add('text-success', 'fw-bold');
+          } else if (result.dailyPL < 0) {
+            plCell.classList.add('text-danger', 'fw-bold');
+            dailyGrowthCell.classList.add('text-danger', 'fw-bold');
+            totalGrowthCell.classList.add('text-danger', 'fw-bold');
+            multiplierCell.classList.add('text-danger', 'fw-bold');
+          }
         });
+      });
 
-        function formatMoney(amount) {
-            switch(selectedCurrency) {
-                case '€':
-                    return numeral(amount).format('0,0.00') + ' €';
-                case '₿':
-                    return numeral(amount).format('0,0.00000000') + ' ₿';
-                case 'Ξ':
-                    return numeral(amount).format('0,0.00000000') + ' Ξ';
-                case '¥':
-                case '₩':
-                    // No decimals for Yen and Won
-                    return selectedCurrency + numeral(amount).format('0,0');
-                case 'USDT':
-                case 'BNB':
-                    // Crypto tokens
-                    return numeral(amount).format('0,0.00') + ' ' + selectedCurrency;
-                default:
-                    // Default format for other currencies
-                    return selectedCurrency + numeral(amount).format('0,0.00');
-            }
-        }
+      document.getElementById('includeLosses').addEventListener('change', function () {
+        const lossesSection = document.querySelectorAll('.losses-section');
+        const losingTradesInput = document.getElementById('losingTrades');
+        const lossPerTradeInput = document.getElementById('lossPerTrade');
 
-        function updateSummary() {
-            const summaryInitial = document.getElementById('summaryInitial');
-            const summaryFinal = document.getElementById('summaryFinal');
-            
-            if (summaryInitial && summaryInitial.textContent) {
-                const value = parseFloat(summaryInitial.textContent);
-                summaryInitial.textContent = formatMoney(value);
-            }
-            if (summaryFinal && summaryFinal.textContent) {
-                const value = parseFloat(summaryFinal.textContent);
-                summaryFinal.textContent = formatMoney(value);
-            }
-        }
+        lossesSection.forEach(section => {
+          if (this.checked) {
+            section.classList.remove('d-none');
+            losingTradesInput.setAttribute('required', '');
+            lossPerTradeInput.setAttribute('required', '');
+          } else {
+            section.classList.add('d-none');
+            losingTradesInput.removeAttribute('required');
+            lossPerTradeInput.removeAttribute('required');
+            losingTradesInput.value = '0';
+            lossPerTradeInput.value = '0';
+          }
+        });
+      });
 
-        document.getElementById('days').addEventListener('change', function() {
-            const customDaysDiv = document.getElementById('customDaysDiv');
-            if (this.value === 'custom') {
-                customDaysDiv.classList.remove('d-none');
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('/sw.js')
+            .then(registration => {
+              console.log('ServiceWorker registration successful');
+            })
+            .catch(err => {
+              console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+      }
+
+      // Function to save form data to localStorage
+      function saveFormData() {
+        const formData = {
+          initialInvestment: document.getElementById('initialInvestment').value,
+          currency: document.getElementById('currency').value,
+          winningTrades: document.getElementById('winningTrades').value,
+          includeLosses: document.getElementById('includeLosses').checked,
+          losingTrades: document.getElementById('losingTrades').value,
+          profitPerTrade: document.getElementById('profitPerTrade').value,
+          lossPerTrade: document.getElementById('lossPerTrade').value,
+          reinvestRate: document.getElementById('reinvestRate').value,
+          days: document.getElementById('days').value,
+          customDays: document.getElementById('customDays').value,
+        };
+
+        localStorage.setItem('investmentCalculatorData', JSON.stringify(formData));
+      }
+
+      // Function to load form data from localStorage
+      function loadFormData() {
+        const savedData = localStorage.getItem('investmentCalculatorData');
+        if (savedData) {
+          const formData = JSON.parse(savedData);
+
+          // Restore all form values
+          document.getElementById('initialInvestment').value = formData.initialInvestment;
+          document.getElementById('currency').value = formData.currency;
+          document.getElementById('winningTrades').value = formData.winningTrades;
+          document.getElementById('includeLosses').checked = formData.includeLosses;
+          document.getElementById('losingTrades').value = formData.losingTrades;
+          document.getElementById('profitPerTrade').value = formData.profitPerTrade;
+          document.getElementById('lossPerTrade').value = formData.lossPerTrade;
+          document.getElementById('reinvestRate').value = formData.reinvestRate;
+          document.getElementById('days').value = formData.days;
+          document.getElementById('customDays').value = formData.customDays;
+
+          // Trigger the losses section visibility
+          const lossesSection = document.querySelectorAll('.losses-section');
+          lossesSection.forEach(section => {
+            if (formData.includeLosses) {
+              section.classList.remove('d-none');
             } else {
-                customDaysDiv.classList.add('d-none');
+              section.classList.add('d-none');
             }
-        });
+          });
 
-        document.getElementById('calculatorForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get input values
-            const initialInvestment = parseFloat(document.getElementById('initialInvestment').value);
-            const winningTrades = parseInt(document.getElementById('winningTrades').value);
-            const losingTrades = parseInt(document.getElementById('losingTrades').value);
-            const profitPerTrade = parseFloat(document.getElementById('profitPerTrade').value) / 100;
-            const lossPerTrade = parseFloat(document.getElementById('lossPerTrade').value) / 100;
-            const reinvestRate = parseFloat(document.getElementById('reinvestRate').value) / 100;
-            const daysSelect = document.getElementById('days');
-            const days = daysSelect.value === 'custom' 
-                ? parseInt(document.getElementById('customDays').value)
-                : parseInt(daysSelect.value);
+          // Trigger custom days visibility
+          const customDaysDiv = document.getElementById('customDaysDiv');
+          if (formData.days === 'custom') {
+            customDaysDiv.classList.remove('d-none');
+          } else {
+            customDaysDiv.classList.add('d-none');
+          }
 
-            // Calculate results
-            let currentInvestment = initialInvestment;
-            const results = [];
-
-            for (let day = 1; day <= days; day++) {
-                let dailyCapital = currentInvestment;
-                let endCapital = currentInvestment;
-
-                // Calculate winning trades
-                for (let trade = 0; trade < winningTrades; trade++) {
-                    const tradeProfit = endCapital * profitPerTrade;
-                    endCapital += tradeProfit;
-                }
-
-                // Calculate losing trades
-                for (let trade = 0; trade < losingTrades; trade++) {
-                    const tradeLoss = endCapital * lossPerTrade;
-                    endCapital -= tradeLoss;
-                }
-
-                const dailyPL = endCapital - dailyCapital;
-                const reinvested = dailyPL > 0 ? dailyPL * reinvestRate : dailyPL;
-                
-                results.push({
-                    day,
-                    startCapital: dailyCapital,
-                    dailyPL,
-                    endCapital,
-                    reinvested,
-                    trades: `${winningTrades}W/${losingTrades}L`
-                });
-
-                currentInvestment = dailyCapital + reinvested;
-            }
-
-            // Clear previous results
-            const tbody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
-            tbody.innerHTML = '';
-
-            // Update summary section
-            const lastResult = results[results.length - 1];
-            const totalGrowthPercentage = ((lastResult.endCapital - initialInvestment) / initialInvestment * 100);
-            const growthMultiplier = lastResult.endCapital / initialInvestment;
-
-            document.getElementById('summaryInitial').textContent = formatMoney(initialInvestment);
-            document.getElementById('summaryFinal').textContent = formatMoney(lastResult.endCapital);
-            document.getElementById('summaryGrowth').textContent = numeral(totalGrowthPercentage).format('+0,0.00') + '%';
-            document.getElementById('summaryMultiplier').textContent = numeral(growthMultiplier).format('0,0.00') + '×';
-
-            // Color code the summary cards based on growth
-            const summaryFinal = document.getElementById('summaryFinal');
-            const summaryGrowth = document.getElementById('summaryGrowth');
-            const summaryMultiplier = document.getElementById('summaryMultiplier');
-
-            if (totalGrowthPercentage > 0) {
-                summaryFinal.classList.add('text-success', 'fw-bold');
-                summaryGrowth.classList.add('text-success', 'fw-bold');
-                summaryMultiplier.classList.add('text-success', 'fw-bold');
-            } else if (totalGrowthPercentage < 0) {
-                summaryFinal.classList.add('text-danger', 'fw-bold');
-                summaryGrowth.classList.add('text-danger', 'fw-bold');
-                summaryMultiplier.classList.add('text-danger', 'fw-bold');
-            }
-
-            results.forEach(result => {
-                const row = tbody.insertRow();
-                const dailyGrowthPercentage = ((result.endCapital - result.startCapital) / result.startCapital * 100);
-                const totalGrowthPercentage = ((result.endCapital - initialInvestment) / initialInvestment * 100);
-                const growthMultiplier = result.endCapital / initialInvestment;
-                
-                row.insertCell().textContent = result.day;
-                row.insertCell().textContent = formatMoney(result.startCapital);
-                row.insertCell().textContent = formatMoney(result.dailyPL);
-                row.insertCell().textContent = numeral(dailyGrowthPercentage).format('+0,0.00') + '%';
-                row.insertCell().textContent = numeral(totalGrowthPercentage).format('+0,0.00') + '%';
-                row.insertCell().textContent = numeral(growthMultiplier).format('0,0.00') + '×';
-                row.insertCell().textContent = formatMoney(result.endCapital);
-                row.insertCell().textContent = formatMoney(result.reinvested);
-                row.insertCell().textContent = result.trades;
-
-                // Color code the P/L and Growth cells
-                const plCell = row.cells[2];
-                const dailyGrowthCell = row.cells[3];
-                const totalGrowthCell = row.cells[4];
-                const multiplierCell = row.cells[5];
-                
-                if (result.dailyPL > 0) {
-                    plCell.classList.add('text-success', 'fw-bold');
-                    dailyGrowthCell.classList.add('text-success', 'fw-bold');
-                    totalGrowthCell.classList.add('text-success', 'fw-bold');
-                    multiplierCell.classList.add('text-success', 'fw-bold');
-                } else if (result.dailyPL < 0) {
-                    plCell.classList.add('text-danger', 'fw-bold');
-                    dailyGrowthCell.classList.add('text-danger', 'fw-bold');
-                    totalGrowthCell.classList.add('text-danger', 'fw-bold');
-                    multiplierCell.classList.add('text-danger', 'fw-bold');
-                }
-            });
-        });
-
-        document.getElementById('includeLosses').addEventListener('change', function() {
-            const lossesSection = document.querySelectorAll('.losses-section');
-            const losingTradesInput = document.getElementById('losingTrades');
-            const lossPerTradeInput = document.getElementById('lossPerTrade');
-            
-            lossesSection.forEach(section => {
-                if (this.checked) {
-                    section.classList.remove('d-none');
-                    losingTradesInput.setAttribute('required', '');
-                    lossPerTradeInput.setAttribute('required', '');
-                } else {
-                    section.classList.add('d-none');
-                    losingTradesInput.removeAttribute('required');
-                    lossPerTradeInput.removeAttribute('required');
-                    losingTradesInput.value = '0';
-                    lossPerTradeInput.value = '0';
-                }
-            });
-        });
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registration successful');
-                    })
-                    .catch(err => {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-            });
+          // Update currency display
+          selectedCurrency = formData.currency;
+          updateSummary();
         }
+      }
 
-        // Function to save form data to localStorage
-        function saveFormData() {
-            const formData = {
-                initialInvestment: document.getElementById('initialInvestment').value,
-                currency: document.getElementById('currency').value,
-                winningTrades: document.getElementById('winningTrades').value,
-                includeLosses: document.getElementById('includeLosses').checked,
-                losingTrades: document.getElementById('losingTrades').value,
-                profitPerTrade: document.getElementById('profitPerTrade').value,
-                lossPerTrade: document.getElementById('lossPerTrade').value,
-                reinvestRate: document.getElementById('reinvestRate').value,
-                days: document.getElementById('days').value,
-                customDays: document.getElementById('customDays').value
-            };
-            
-            localStorage.setItem('investmentCalculatorData', JSON.stringify(formData));
-        }
-
-        // Function to load form data from localStorage
-        function loadFormData() {
-            const savedData = localStorage.getItem('investmentCalculatorData');
-            if (savedData) {
-                const formData = JSON.parse(savedData);
-                
-                // Restore all form values
-                document.getElementById('initialInvestment').value = formData.initialInvestment;
-                document.getElementById('currency').value = formData.currency;
-                document.getElementById('winningTrades').value = formData.winningTrades;
-                document.getElementById('includeLosses').checked = formData.includeLosses;
-                document.getElementById('losingTrades').value = formData.losingTrades;
-                document.getElementById('profitPerTrade').value = formData.profitPerTrade;
-                document.getElementById('lossPerTrade').value = formData.lossPerTrade;
-                document.getElementById('reinvestRate').value = formData.reinvestRate;
-                document.getElementById('days').value = formData.days;
-                document.getElementById('customDays').value = formData.customDays;
-
-                // Trigger the losses section visibility
-                const lossesSection = document.querySelectorAll('.losses-section');
-                lossesSection.forEach(section => {
-                    if (formData.includeLosses) {
-                        section.classList.remove('d-none');
-                    } else {
-                        section.classList.add('d-none');
-                    }
-                });
-
-                // Trigger custom days visibility
-                const customDaysDiv = document.getElementById('customDaysDiv');
-                if (formData.days === 'custom') {
-                    customDaysDiv.classList.remove('d-none');
-                } else {
-                    customDaysDiv.classList.add('d-none');
-                }
-
-                // Update currency display
-                selectedCurrency = formData.currency;
-                updateSummary();
-            }
-        }
-
-        // Add event listeners to save form data on change
-        document.querySelectorAll('#calculatorForm input, #calculatorForm select').forEach(element => {
-            element.addEventListener('change', saveFormData);
+      // Add event listeners to save form data on change
+      document
+        .querySelectorAll('#calculatorForm input, #calculatorForm select')
+        .forEach(element => {
+          element.addEventListener('change', saveFormData);
         });
 
-        // Load saved data when page loads
-        window.addEventListener('load', loadFormData);
+      // Load saved data when page loads
+      window.addEventListener('load', loadFormData);
 
-        // Save data before page unloads
-        window.addEventListener('beforeunload', saveFormData);
+      // Save data before page unloads
+      window.addEventListener('beforeunload', saveFormData);
     </script>
-</body>
+  </body>
 </html>
