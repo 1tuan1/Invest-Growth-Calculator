@@ -186,6 +186,46 @@
                         </div>
                       </div>
 
+                      <div class="col-md-6 col-lg-4">
+                        <div class="form-floating">
+                          <select class="form-select" id="payoffType" required>
+                            <option value="fixed">Fixed Amount</option>
+                            <option value="percent">Percentage</option>
+                          </select>
+                          <label for="payoffType">Payoff Type</label>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 col-lg-4">
+                        <div class="form-floating">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="payoffAmount"
+                            value="0"
+                            min="0"
+                            step="0.01"
+                            required
+                          />
+                          <label for="payoffAmount">Payoff Amount</label>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 col-lg-4">
+                        <div class="form-floating">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="payoffInterval"
+                            value="7"
+                            min="1"
+                            step="1"
+                            required
+                          />
+                          <label for="payoffInterval">Payoff Every X Days</label>
+                        </div>
+                      </div>
+
                       <div class="col-md-6">
                         <div class="form-floating">
                           <select class="form-select" id="days">
@@ -280,6 +320,7 @@
                           <th>End Capital (€)</th>
                           <th>Reinvested (€)</th>
                           <th>Win/Loss</th>
+                          <th>Payoff</th>
                         </tr>
                       </thead>
                       <tbody></tbody>
@@ -365,6 +406,10 @@
         // Calculate results
         let currentInvestment = initialInvestment;
         const results = [];
+        let totalPayoff = 0;
+        const payoffType = document.getElementById('payoffType').value;
+        const payoffAmount = parseFloat(document.getElementById('payoffAmount').value);
+        const payoffInterval = parseInt(document.getElementById('payoffInterval').value);
 
         for (let day = 1; day <= days; day++) {
           let dailyCapital = currentInvestment;
@@ -385,6 +430,17 @@
           const dailyPL = endCapital - dailyCapital;
           const reinvested = dailyPL > 0 ? dailyPL * reinvestRate : dailyPL;
 
+          let payoffValue = 0;
+          if (day % payoffInterval === 0) {
+            if (payoffType === 'fixed') {
+              payoffValue = payoffAmount;
+            } else {
+              payoffValue = endCapital * (payoffAmount / 100);
+            }
+            endCapital -= payoffValue;
+            totalPayoff += payoffValue;
+          }
+
           results.push({
             day,
             startCapital: dailyCapital,
@@ -392,9 +448,11 @@
             endCapital,
             reinvested,
             trades: `${winningTrades}W/${losingTrades}L`,
+            payoff: payoffValue,
           });
 
-          currentInvestment = dailyCapital + reinvested;
+          // Update currentInvestment for next day after considering payoff
+          currentInvestment = endCapital + (dailyPL > 0 ? reinvested - dailyPL : 0);
         }
 
         // Clear previous results
@@ -450,6 +508,7 @@
           row.insertCell().textContent = formatMoney(result.endCapital);
           row.insertCell().textContent = formatMoney(result.reinvested);
           row.insertCell().textContent = result.trades;
+          row.insertCell().textContent = result.payoff > 0 ? formatMoney(result.payoff) : '-';
 
           // Color code the P/L and Growth cells
           const plCell = row.cells[2];
@@ -469,6 +528,26 @@
             multiplierCell.classList.add('text-danger', 'fw-bold');
           }
         });
+
+        // Add total payoff to summary section
+        const summarySection = document.querySelector('.row.mb-4');
+        const existingPayoffCard = document.getElementById('summaryPayoff')?.closest('.col-md-3');
+        if (existingPayoffCard) {
+          existingPayoffCard.remove();
+        }
+        summarySection.insertAdjacentHTML(
+          'beforeend',
+          `
+          <div class="col-md-3 mb-2">
+            <div class="card bg-light">
+              <div class="card-body text-center">
+                <h6 class="text-muted mb-2">Total Payoff</h6>
+                <h4 class="mb-0" id="summaryPayoff">${formatMoney(totalPayoff)}</h4>
+              </div>
+            </div>
+          </div>
+        `
+        );
       });
 
       document.getElementById('includeLosses').addEventListener('change', function () {
@@ -518,6 +597,9 @@
           days: document.getElementById('days').value,
           customDays: document.getElementById('customDays').value,
           startDate: document.getElementById('startDate').value,
+          payoffType: document.getElementById('payoffType').value,
+          payoffAmount: document.getElementById('payoffAmount').value,
+          payoffInterval: document.getElementById('payoffInterval').value,
         };
 
         localStorage.setItem('investmentCalculatorData', JSON.stringify(formData));
@@ -540,6 +622,9 @@
           document.getElementById('reinvestRate').value = formData.reinvestRate;
           document.getElementById('days').value = formData.days;
           document.getElementById('customDays').value = formData.customDays;
+          document.getElementById('payoffType').value = formData.payoffType || 'fixed';
+          document.getElementById('payoffAmount').value = formData.payoffAmount || '0';
+          document.getElementById('payoffInterval').value = formData.payoffInterval || '7';
 
           // Trigger the losses section visibility
           const lossesSection = document.querySelectorAll('.losses-section');
